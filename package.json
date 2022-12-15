@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-rest",
+  "version": "1.0.0",
+  "description": "node js rest service development daily",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "dev": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terzurumluoglu/nodejs-rest.git"
+  },
+  "keywords": [
+    "nodejs",
+    "rest",
+    "service",
+    "api"
+  ],
+  "author": "Toprak ERZURUMLUOĞLU <toprakerzurumluoglu@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/terzurumluoglu/nodejs-rest/issues"
+  },
+  "homepage": "https://github.com/terzurumluoglu/nodejs-rest#readme"
+}
