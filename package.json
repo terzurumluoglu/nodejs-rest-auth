@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "dev": "nodemon index"
+    "dev": "ENVIRONMENT=development nodemon index",
+    "prod": "ENVIRONMENT=production node index"
   },
   "repository": {
     "type": "git",
