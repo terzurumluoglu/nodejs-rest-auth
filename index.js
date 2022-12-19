@@ -1,4 +1,5 @@
 const { server } = require('./src/server');
+const { userRoute } = require('./src/api/routes');
 
 server.get('/', (req, res, next) => {
     const data = {
@@ -6,3 +7,5 @@ server.get('/', (req, res, next) => {
     }
     res.status(200).send(data);
 });
+
+server.use('/users', userRoute);
