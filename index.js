@@ -14,6 +14,13 @@ dotenv.config({ path: environmentPath });
 
 const PORT = process.env.PORT;
 
+app.get('/', (req, res, next) => {
+    const data = {
+        message: 'Hello World!',
+    }
+    res.status(200).send(data);
+});
+
 app.listen(PORT, () => {
     console.log(process.env.MESSAGE);
 });
