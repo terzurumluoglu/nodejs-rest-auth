@@ -1,12 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const { userController } = require('../controllers');
 
-router.route('/').get((req, res, next) => {
-    const data = {
-        success: true,
-        message: 'Success',
-    };
-    res.status(200).send(data);
-});
+router.route('/').get(userController.getAllUsers);
 
 module.exports = router;
