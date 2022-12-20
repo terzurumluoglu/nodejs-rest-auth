@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const { basePath, environments } = require('../constants');
+const { connectDatabase } = require('../config/db');
 
 const server = express();
 
@@ -11,6 +12,8 @@ if (process.env.ENVIRONMENT === environments.production) {
 }
 
 dotenv.config({ path: environmentPath });
+
+connectDatabase();
 
 const PORT = process.env.PORT;
 
