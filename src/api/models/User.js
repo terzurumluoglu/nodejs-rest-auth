@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const UserSchema = mongoose.Schema({
+const UserSchema = new Schema({
     name: {
         type: String,
-        require: [true, 'Please enter a name']
+        require: [true, 'Please enter a name'],
     },
     email: {
         type: String,
@@ -12,19 +13,19 @@ const UserSchema = mongoose.Schema({
         match: [
             /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
             'Please enter a correct email'
-        ]    
+        ],
     },
     password: {
         type: String,
         require: [true, 'Please enter a password'],
         minLength: 6,
-        select: false
+        select: false,
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now(),
     }
 });
 

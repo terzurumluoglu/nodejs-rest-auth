@@ -17,6 +17,8 @@ connectDatabase();
 
 const PORT = process.env.PORT;
 
+server.use(express.json());
+
 server.listen(PORT, () => {
     console.log(process.env.MESSAGE);
 });

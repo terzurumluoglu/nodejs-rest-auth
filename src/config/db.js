@@ -12,8 +12,8 @@ const connectDatabase = async () => {
         .replace('{{PASSWORD}}', password);
 
     const con = await mongoose.connect(connectionString);
-
-    console.log('db connection was creaated successfully!');
+    const { name } = con.connection;
+    console.log(`db connection was creaated successfully! Database: ${name}`);
 }
 
 module.exports = { connectDatabase };
