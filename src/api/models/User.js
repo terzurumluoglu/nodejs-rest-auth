@@ -4,11 +4,11 @@ const { Schema } = mongoose;
 const UserSchema = new Schema({
     name: {
         type: String,
-        require: [true, 'Please enter a name'],
+        required: [true, 'Please enter a name'],
     },
     email: {
         type: String,
-        require: [true, 'Please enter a name'],
+        required: [true, 'Please enter a name'],
         unique: true,
         match: [
             /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
@@ -17,7 +17,7 @@ const UserSchema = new Schema({
     },
     password: {
         type: String,
-        require: [true, 'Please enter a password'],
+        required: [true, 'Please enter a password'],
         minLength: 6,
         select: false,
     },
