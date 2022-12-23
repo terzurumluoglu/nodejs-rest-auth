@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { authService } = require('../services');
+const jwt = require('jsonwebtoken');
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
@@ -33,5 +34,11 @@ const UserSchema = new Schema({
 UserSchema.pre('save', async function(next) {
     this.password = await authService.hashString(this.password);
 });
+
+UserSchema.methods.generateJWT = function() {
+    return jwt.sign({id: this._id}, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE
+    });
+}
 
 module.exports = mongoose.model('User', UserSchema);
