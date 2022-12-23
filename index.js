@@ -1,5 +1,6 @@
 const { server } = require('./src/server');
-const { userRoute } = require('./src/api/routes');
+const { userRoute, authRoute } = require('./src/api/routes');
+const { errorHandler } = require('./src/api/middleware/errorHandler');
 
 server.get('/', (req, res, next) => {
     const data = {
@@ -9,3 +10,5 @@ server.get('/', (req, res, next) => {
 });
 
 server.use('/users', userRoute);
+server.use('/auth', authRoute);
+server.use(errorHandler);

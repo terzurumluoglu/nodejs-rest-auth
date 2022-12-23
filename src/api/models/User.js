@@ -1,14 +1,16 @@
 const mongoose = require('mongoose');
+const { authService } = require('../services');
+const jwt = require('jsonwebtoken');
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
     name: {
         type: String,
-        require: [true, 'Please enter a name'],
+        required: [true, 'Please enter a name'],
     },
     email: {
         type: String,
-        require: [true, 'Please enter a name'],
+        required: [true, 'Please enter a name'],
         unique: true,
         match: [
             /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
@@ -17,7 +19,7 @@ const UserSchema = new Schema({
     },
     password: {
         type: String,
-        require: [true, 'Please enter a password'],
+        required: [true, 'Please enter a password'],
         minLength: 6,
         select: false,
     },
@@ -28,5 +30,19 @@ const UserSchema = new Schema({
         default: Date.now(),
     }
 });
+
+UserSchema.pre('save', async function(next) {
+    this.password = await authService.hashString(this.password);
+});
+
+UserSchema.methods.generateJWT = function() {
+    return jwt.sign({id: this._id}, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE
+    });
+};
+
+UserSchema.methods.matchPassword = function(enteredPassword) {
+    return authService.matchPassword(this.password, enteredPassword);
+}
 
 module.exports = mongoose.model('User', UserSchema);
