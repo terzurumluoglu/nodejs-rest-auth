@@ -10,8 +10,8 @@ exports.errorHandler = (err, req, res, next) => {
         error.message = Object.values(err.errors).map((val) => val.message).join(', ');
     }
 
-    res.status(500).json({
+    res.status(err.statusCode || 500).json({
         success: false,
-        error
+        error: err.message || 'Server Error'
     });
 }
