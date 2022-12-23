@@ -15,8 +15,12 @@ exports.register = asyncHandler(async (req, res, next) => {
     });
 
     const response = await user.save();
+
+    const access_token = response.generateJWT();
+
     res.status(200).json({
         success: true,
-        data: response
+        data: response,
+        access_token
     });
-})
+});
