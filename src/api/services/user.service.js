@@ -1,3 +1,5 @@
-const { userMock } = require('../../mock');
 
-exports.getAllUsers = () => userMock;
+exports.getUserInfo = (userResponse) => {
+    const { _id, name, email, createdAt } = userResponse;
+    return { id: _id, name, email, createdAt };
+}
