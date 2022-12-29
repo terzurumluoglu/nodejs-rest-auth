@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const { authService } = require('../services');
-const jwt = require('jsonwebtoken');
-const { Schema } = mongoose;
+const { Schema, model } = mongoose;
 
-const UserSchema = new Schema({
+const userSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Please enter a name'],
@@ -24,6 +23,7 @@ const UserSchema = new Schema({
         select: false,
     },
     resetPasswordToken: String,
+    access_token: String,
     resetPasswordExpire: Date,
     createdAt: {
         type: Date,
@@ -31,18 +31,12 @@ const UserSchema = new Schema({
     }
 });
 
-UserSchema.pre('save', async function(next) {
+userSchema.pre('save', async function(next) {
     this.password = await authService.hashString(this.password);
 });
 
-UserSchema.methods.generateJWT = function() {
-    return jwt.sign({id: this._id}, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE
-    });
-};
-
-UserSchema.methods.matchPassword = function(enteredPassword) {
+userSchema.methods.matchPassword = function(enteredPassword) {
     return authService.matchPassword(this.password, enteredPassword);
 }
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = model('User', userSchema);

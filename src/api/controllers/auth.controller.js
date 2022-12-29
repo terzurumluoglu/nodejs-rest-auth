@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const { asyncHandler } = require('../middleware/asyncHandler');
+const service = require('../services');
 const ErrorResponse = require('../utils/ErrorResponse');
 
 // @desc   Register
@@ -17,15 +18,15 @@ exports.register = asyncHandler(async (req, res, next) => {
 
     const response = await user.save();
 
-    const access_token = response.generateJWT();
+    const access_token = service.authService.generateJWT();
+
+    const userInfo = service.userService.getUserInfo(user);
 
     res.status(200).json({
         success: true,
-        data: response,
-        access_token
+        data: { ...userInfo, access_token },
     });
 });
-
 
 // @desc   Login
 // @route  POST /auth/login
@@ -35,30 +36,30 @@ exports.login = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
 
     if ([email, password].includes(undefined)) {
+        return next(new ErrorResponse('Email and Password must enter', 400));
+    }
+
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user) {
         return next(new ErrorResponse('Email or Password is invalid!', 401));
     }
 
-    const response = await User.findOne({ email }).select('+password');
+    const isMatch = await user.matchPassword(password);
 
-    if (!response) {
+    if (!isMatch) {
         return next(new ErrorResponse('Email or Password is invalid!', 401));
     }
-    
-    const isMatch = await response.matchPassword(password);
 
-    if (isMatch) {
-        const access_token = response.generateJWT();
-        res.status(200).json({
-            success: true,
-            access_token
-        })
-    } else {
-        return next(new ErrorResponse('Email or Password is invalid!', 401));
-    }
+    const userInfo = service.userService.getUserInfo(user);
+
+    const access_token = service.authService.generateJWT(user._id);
 
     res.status(200).json({
         success: true,
-        data: response,
-        access_token
+        data: {
+            ...userInfo,
+            access_token
+        },
     });
 });
