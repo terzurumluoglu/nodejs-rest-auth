@@ -20,7 +20,7 @@ exports.register = asyncHandler(async (req, res, next) => {
 
     const access_token = service.authService.generateJWT();
 
-    const userInfo = service.userService.getUserInfo(user);
+    const userInfo = service.userService.getUserInfo(response);
 
     res.status(200).json({
         success: true,
@@ -51,15 +51,5 @@ exports.login = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Email or Password is invalid!', 401));
     }
 
-    const userInfo = service.userService.getUserInfo(user);
-
-    const access_token = service.authService.generateJWT(user._id);
-
-    res.status(200).json({
-        success: true,
-        data: {
-            ...userInfo,
-            access_token
-        },
-    });
+    service.authService.sendTokenResponse(user, 200, res);
 });
