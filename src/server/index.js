@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
 const { basePath, environments } = require('../constants');
 const { connectDatabase } = require('../config/db');
 
@@ -18,6 +19,7 @@ connectDatabase();
 const PORT = process.env.PORT;
 
 server.use(express.json());
+server.use(cookieParser());
 
 server.listen(PORT, () => {
     console.log(process.env.MESSAGE);
