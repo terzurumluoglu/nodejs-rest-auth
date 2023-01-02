@@ -31,7 +31,7 @@ const userSchema = new Schema({
     }
 });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function() {
     this.password = await authService.hashString(this.password);
 });
 
