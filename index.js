@@ -1,5 +1,5 @@
 const { server } = require('./src/server');
-const { authRoute } = require('./src/api/routes');
+const authRoute = require('./src/api/routes/auth.route');
 const { errorHandler } = require('./src/api/middleware/errorHandler');
 
 server.get('/', (req, res, next) => {

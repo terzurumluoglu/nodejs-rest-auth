@@ -1,4 +1,4 @@
-exports.errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, next) => {
 
     const validationError = 'ValidationError';
 
@@ -15,3 +15,5 @@ exports.errorHandler = (err, req, res, next) => {
         error: err.message || 'Server Error'
     });
 }
+
+module.exports = { errorHandler };

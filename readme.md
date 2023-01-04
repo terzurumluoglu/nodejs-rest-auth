@@ -1,0 +1,3 @@
+# Sample NodeJS Auth Rest Service (For Only Authentication Server)
+
+to be continue...

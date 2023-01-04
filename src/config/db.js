@@ -1,20 +1,30 @@
-const mongoose = require('mongoose');
+const { MongoClient } = require('mongodb');
+const ErrorResponse = require('../api/utils/ErrorResponse');
 
-mongoose.set("strictQuery", false);
+let _database;
 
 const connectDatabase = async () => {
-
-    const name = process.env.DB_NAME;
+    const databaseName = process.env.DB_NAME;
     const username = process.env.DB_USERNAME;
     const password = process.env.DB_PASSWORD;
 
     const connectionString = process.env.CONNECTION_STRING
         .replace('{{USERNAME}}', username)
         .replace('{{PASSWORD}}', password)
-        .replace('{{NAME}}', name);
+        .replace('{{NAME}}', databaseName);
 
-    const con = await mongoose.connect(connectionString);
-    console.log(`db connection was creaated successfully! Database: ${con.connection.name}`);
+    const client = new MongoClient(connectionString);
+    _database = client.db();
+
+    const connection = await client.connect();
+    console.log(`db connection was creaated successfully! Database: ${connection.options.dbName}`);
 }
 
-module.exports = { connectDatabase };
+const getDatabase = () => {
+    if (_database) {
+        return _database;
+    }
+    return new ErrorResponse('No Database Found', 500);
+}
+
+module.exports = { connectDatabase, getDatabase };
