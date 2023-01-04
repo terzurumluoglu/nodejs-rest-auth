@@ -27,7 +27,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 
     const token = generateJWT(userInfo.id);
 
-    const now = (new Date()).getTime();
+    const now = Date.now();
     const expires = new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond);
 
     const options = {
