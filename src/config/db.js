@@ -27,4 +27,6 @@ const getDatabase = () => {
     return new ErrorResponse('No Database Found', 500);
 }
 
-module.exports = { connectDatabase, getDatabase };
+const getUserCollection = () => getDatabase().collection('users');
+
+module.exports = { connectDatabase, getDatabase, getUserCollection };
