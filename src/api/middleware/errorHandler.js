@@ -3,10 +3,10 @@ const { ErrorResponse } = require("../utils");
 const errorHandler = (err, req, res, next) => {
 
     let error = { ...err };
-    error.name = err.name;
+    error.message = err.message;
 
     if (err.code === 11000) {
-        const message = 'Duplicete field value entered';
+        const message = 'Duplicate field value entered';
         error = new ErrorResponse(message, 400);
     }
 
