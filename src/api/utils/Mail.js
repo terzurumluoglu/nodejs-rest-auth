@@ -12,7 +12,7 @@ class Mail {
         });
     }
 
-    sendEmail = async ({ to, subject, text }) => {
+    send = async ({ to, subject, text }) => {
         const mailOptions = {
             from: process.env.MAIL_USER,
             to,
