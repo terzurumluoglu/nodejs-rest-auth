@@ -1,18 +1,18 @@
+const { ErrorResponse } = require("../utils");
+
 const errorHandler = (err, req, res, next) => {
 
-    const validationError = 'ValidationError';
+    let error = { ...err };
+    error.message = err.message;
 
-    const error = { ...err };
-    error.name = err.name;
-
-    // Mongoose validation error
-    if (error.name === validationError) {
-        error.message = Object.values(err.errors).map((val) => val.message).join(', ');
+    if (err.code === 11000) {
+        const message = 'Duplicate field value entered';
+        error = new ErrorResponse(message, 400);
     }
 
-    res.status(err.statusCode || 500).json({
+    res.status(error.statusCode || 500).json({
         success: false,
-        error: err.message || 'Server Error'
+        error: error.message || 'Server Error'
     });
 }
 

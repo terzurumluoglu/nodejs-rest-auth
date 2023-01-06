@@ -2,8 +2,6 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { environments } = require('../../constants');
 
-const { getUserInfo } = require('../services/user.service');
-
 const dayAsSecond = 24 * 60 * 60 * 1000;
 
 const hashString = async (str) => {
@@ -23,9 +21,7 @@ const generateJWT = (id) => {
 
 const sendTokenResponse = (user, statusCode, res) => {
 
-    const userInfo = getUserInfo(user);
-
-    const token = generateJWT(userInfo.id);
+    const token = generateJWT(user.id);
 
     const now = Date.now();
     const expires = new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond);
@@ -42,7 +38,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     res.status(statusCode).cookie('token', token, options).send({
         success: true,
         data: {
-            ...userInfo,
+            ...user,
             token
         }
     })
