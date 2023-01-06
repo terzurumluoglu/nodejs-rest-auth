@@ -1,11 +1,7 @@
 const { asyncHandler } = require('../middleware/asyncHandler');
-const { authService } = require('../services');
-const { ErrorResponse, Mail }  = require('../utils');
-const { getDatabase } = require('../../config/db');
-const crypto = require('crypto');
-
-
-const getUserCollection = () => getDatabase().collection('users');
+const { authService, userService } = require('../services');
+const { ErrorResponse }  = require('../utils');
+const User = require('../models/user');
 
 // @desc   Register
 // @route  POST /auth/register
@@ -14,22 +10,14 @@ const register = asyncHandler(async (req, res, next) => {
 
     const { name, email, password } = req.body;
 
-    if ([name, email, password].includes(undefined)) {
-        return next(new ErrorResponse('Name, Email, Password must enter!', 400));
-    }
+    const user = new User();
+    user.setName = name;
+    user.setEmail = email;
+    user.setPassword = password;
 
-    const userToBeInserted = {
-        name,
-        email,
-        password: await authService.hashString(password),
-    }
+    const savedUser = await userService.save(user);
 
-    const collection = getUserCollection();
-    const { insertedId } = await collection.insertOne(userToBeInserted);
-
-    const user = await collection.findOne({ _id: insertedId });
-
-    authService.sendTokenResponse(user, 200, res);
+    authService.sendTokenResponse(savedUser, 200, res);
 });
 
 // @desc   Login
@@ -39,17 +27,17 @@ const login = asyncHandler(async (req, res, next) => {
 
     const { email, password } = req.body;
 
-    if ([email, password].includes(undefined)) {
+    if (!email || !password) {
         return next(new ErrorResponse('Email and Password must enter', 400));
     }
 
-    const user = await getUserCollection().findOne({ email });
+    const { user, hashedPassword } = await userService.getUserByEmail(email);
 
     if (!user) {
         return next(new ErrorResponse('Email or Password is invalid!', 401));
     }
 
-    const isMatch = await authService.matchPassword({ enteredPassword: password, hashedPassword: user.password });
+    const isMatch = await authService.matchPassword({ enteredPassword: password, hashedPassword });
 
     if (!isMatch) {
         return next(new ErrorResponse('Email or Password is invalid!', 401));
@@ -69,33 +57,15 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Email must enter', 400));
     }
 
-    const user = await getUserCollection().findOne({ email });
+    const { user } = await userService.getUserByEmail(email);
 
     if (!user) {
         return next(new ErrorResponse(`There is no user this email: ${email}`, 401));
     }
 
-    const now = Date.now();
-
-    const resetPasswordKey = crypto.randomBytes(16).toString('hex');
-    const resetPasswordKeyExpire = new Date(now + 10 * 60 * 1000);
-
-    const mail = new Mail();
-
     const url = req.protocol + '://' + req.get('host');
 
-    const to = email;
-    const subject = "Reset Password Request!";
-    const text = `Hey I am a mail :), I was wanted by you to reset your password.
-    You must do post request with data that includes new password this url to change your password in 10 minutes.
-    ${url}/auth/resetpassword/${resetPasswordKey}
-    `;
-
-    await getUserCollection().updateOne(
-        { email },
-        { $set: { resetPasswordKey, resetPasswordKeyExpire } });
-
-    mail.sendEmail({ to, subject, text });
+    await userService.update({ url, email })
 
     res.status(200).send({
         success: true,
@@ -117,17 +87,16 @@ const resetPassword = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Reset Password Key is invalid!', 400));
     }
 
-    const user = await getUserCollection().findOne({ resetPasswordKey });
+    const user = await userService.getUserByResetPasswordKey(resetPasswordKey);
 
     if (!user) {
         return next(new ErrorResponse('Reset Password Key is invalid!', 400));
     }
 
-    const date = new Date();
-
+    const now = new Date();
     const resetPasswordKeyExpire = new Date(user.resetPasswordKeyExpire);
 
-    if (date > resetPasswordKeyExpire) {
+    if (!resetPasswordKeyExpire || now > resetPasswordKeyExpire) {
         return next(new ErrorResponse('Time Out! Reset Password Key is invalid anymore', 400));
     }
 
@@ -135,17 +104,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Password must enter', 400));
     }
 
-    await getUserCollection().updateOne(
-        {
-            email: user.email
-        },
-        {
-            $set: {
-                resetPasswordKey: undefined,
-                resetPasswordKeyExpire: undefined,
-                password: authService.hashString(password)
-            }
-        });
+    await userService.updatePassword({ email: user.email, password });
 
     res.status(200).send({
         success: true,
