@@ -14,6 +14,7 @@ if (process.env.ENVIRONMENT === environments.production) {
 }
 
 if (process.env.ENVIRONMENT === environments.development) {
+    console.log('HOP');
     server.use(cors({ origin: '*', methods: '*' }));
 }
 
