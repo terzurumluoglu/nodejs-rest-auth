@@ -4,8 +4,8 @@
   "description": "node js rest service development daily",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
-    "dev": "ENVIRONMENT=development nodemon index",
+    "start": "nodemon index",
+    "dev": "ENVIRONMENT=development node index",
     "prod": "ENVIRONMENT=production node index"
   },
   "repository": {
