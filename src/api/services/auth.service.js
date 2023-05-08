@@ -29,7 +29,7 @@ const generateRefreshToken = (id) => {
 
 const sendTokenResponse = (user, statusCode, res) => {
 
-    const token = generateJWT(user.id);
+    const accessToken = generateJWT(user.id);
     const refreshToken = generateRefreshToken(user.id);
     refreshTokens.push(refreshToken);
 
@@ -45,11 +45,11 @@ const sendTokenResponse = (user, statusCode, res) => {
         options.secure = true;
     }
 
-    res.status(statusCode).cookie('token', token, options).send({
+    res.status(statusCode).cookie('accessToken', accessToken, options).send({
         success: true,
         data: {
             ...user,
-            token,
+            accessToken,
             refreshToken
         }
     })

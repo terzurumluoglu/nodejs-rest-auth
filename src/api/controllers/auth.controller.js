@@ -114,4 +114,25 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     })
 });
 
-module.exports = { register, login, forgotPassword, resetPassword };
+const token = asyncHandler(async (req, res, next) => {
+
+    const { refreshToken } = req.body;
+    
+    if (refreshToken === null) {
+        return res.status(401).send('UNAUTHORIZE');
+    }
+
+    if (!refreshTokens.includes(refreshToken)) {
+        return res.status(401).send('UNAUTHORIZE');
+    }
+    
+    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) {
+            return res.sendStatus(401)
+        }
+        const accessToken = generateAccessToken({ name: user.name })
+        res.json({ access_token: accessToken })
+    });
+});
+
+module.exports = { register, login, forgotPassword, resetPassword, token };
