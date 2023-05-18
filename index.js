@@ -3,10 +3,10 @@ const authRoute = require('./src/api/routes/auth.route');
 const { errorHandler } = require('./src/api/middleware/errorHandler');
 
 server.get('/', (req, res, next) => {
-    const data = {
+    const result = {
         message: 'Hello World!',
     }
-    res.status(200).send(data);
+    res.status(200).send(result);
 });
 
 server.use('/auth', authRoute);
