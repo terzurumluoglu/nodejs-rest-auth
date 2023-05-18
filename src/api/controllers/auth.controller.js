@@ -2,6 +2,7 @@ const { asyncHandler } = require('../middleware/asyncHandler');
 const { authService, userService } = require('../services');
 const { ErrorResponse }  = require('../utils');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 // @desc   Register
 // @route  POST /auth/register
@@ -43,7 +44,13 @@ const login = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Email or Password is invalid!', 401));
     }
 
-    authService.sendTokenResponse(user, 200, res);
+    const response = {
+        user,
+        res,
+        refreshToken: undefined
+    };
+
+    authService.sendTokenResponse(response);
 });
 
 // @desc   Forgot Password
@@ -69,7 +76,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 
     res.status(200).send({
         success: true,
-        data: {
+        result: {
             message: 'Email was sent successfully'
         }
     })
@@ -108,7 +115,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 
     res.status(200).send({
         success: true,
-        data: {
+        result: {
             message: 'Password changed successfully'
         }
     })
@@ -118,20 +125,23 @@ const token = asyncHandler(async (req, res, next) => {
 
     const { refreshToken } = req.body;
     
-    if (refreshToken === null) {
+    if (!refreshToken) {
         return res.status(401).send('UNAUTHORIZE');
     }
 
-    if (!refreshTokens.includes(refreshToken)) {
-        return res.status(401).send('UNAUTHORIZE');
-    }
-    
-    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) {
+    jwt.verify(refreshToken, process.env.REFRESH_SECRET, (error, decode) => {
+        if (error){
             return res.sendStatus(401)
         }
-        const accessToken = generateAccessToken({ name: user.name })
-        res.json({ access_token: accessToken })
+        const { iat, exp, ...user } = decode;
+
+        const response = {
+            user,
+            res,
+            refreshToken
+        };
+
+        authService.sendTokenResponse(response);
     });
 });
 

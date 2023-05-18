@@ -4,8 +4,6 @@ const { environments } = require('../../constants');
 
 const dayAsSecond = 24 * 60 * 60 * 1000;
 
-const refreshTokens = [];
-
 const hashString = async (str) => {
     const salt = await bcryptjs.genSalt(10);
     return bcryptjs.hash(str, salt);
@@ -15,23 +13,25 @@ const matchPassword = ({ enteredPassword, hashedPassword }) => {
     return bcryptjs.compare(enteredPassword, hashedPassword);
 };
 
-const generateJWT = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateJWT = (user) => {
+    return jwt.sign(user, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     });
 };
 
-const generateRefreshToken = (id) => {
-    return jwt.sign({ id }, process.env.REFRESH_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE
+const generateRefreshToken = (user) => {
+    return jwt.sign(user, process.env.REFRESH_SECRET, {
+        expiresIn: process.env.REFRESH_EXPIRE
     });
 };
 
-const sendTokenResponse = (user, statusCode, res) => {
+const verifyJWT = (refreshToken) => {
+    return jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+};
 
-    const accessToken = generateJWT(user.id);
-    const refreshToken = generateRefreshToken(user.id);
-    refreshTokens.push(refreshToken);
+const sendTokenResponse = (response) => {
+    const { user, res, refreshToken } = response;
+    const accessToken = generateJWT(user);
 
     const now = Date.now();
     const expires = new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond);
@@ -45,14 +45,19 @@ const sendTokenResponse = (user, statusCode, res) => {
         options.secure = true;
     }
 
-    res.status(statusCode).cookie('accessToken', accessToken, options).send({
+    const result = refreshToken ? {
+        accessToken,
+        refreshToken
+    } : {
+        ...user,
+        accessToken,
+        refreshToken: generateRefreshToken(user)
+    };
+
+    res.status(200).cookie('accessToken', accessToken, options).send({
         success: true,
-        data: {
-            ...user,
-            accessToken,
-            refreshToken
-        }
-    })
+        result
+    });
 }
 
-module.exports = { hashString, matchPassword, generateJWT, sendTokenResponse };
+module.exports = { hashString, matchPassword, generateJWT, sendTokenResponse, verifyJWT };
