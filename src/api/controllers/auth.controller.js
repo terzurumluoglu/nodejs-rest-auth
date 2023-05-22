@@ -35,13 +35,13 @@ const login = asyncHandler(async (req, res, next) => {
     const { user, hashedPassword } = await userService.getUserByEmail(email);
 
     if (!user) {
-        return next(new ErrorResponse('Email or Password is invalid!', 401));
+        return next(new ErrorResponse('Email or Password is invalid!', 404));
     }
 
     const isMatch = await authService.matchPassword({ enteredPassword: password, hashedPassword });
 
     if (!isMatch) {
-        return next(new ErrorResponse('Email or Password is invalid!', 401));
+        return next(new ErrorResponse('Email or Password is invalid!', 404));
     }
 
     const response = {
