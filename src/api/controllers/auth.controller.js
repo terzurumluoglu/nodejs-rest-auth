@@ -12,9 +12,9 @@ const register = asyncHandler(async (req, res, next) => {
     const { name, email, password } = req.body;
 
     const user = new User();
-    user.setName = name;
-    user.setEmail = email;
-    user.setPassword = password;
+    user.name = name;
+    user.email = email;
+    user.password = password;
 
     const savedUser = await userService.save(user);
 
