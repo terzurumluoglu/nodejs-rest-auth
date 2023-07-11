@@ -78,7 +78,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
         success: true,
         result: {
             message: 'Email was sent successfully'
-        }
+        },
     })
 });
 
@@ -116,9 +116,9 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     res.status(200).send({
         success: true,
         result: {
-            message: 'Password changed successfully'
-        }
-    })
+            message: 'Password changed successfully',
+        },
+    });
 });
 
 const token = asyncHandler(async (req, res, next) => {
@@ -131,7 +131,7 @@ const token = asyncHandler(async (req, res, next) => {
 
     jwt.verify(refreshToken, process.env.REFRESH_SECRET, (error, decode) => {
         if (error){
-            return res.sendStatus(401)
+            return res.status(401).send('UNAUTHORIZE');
         }
         const { iat, exp, ...user } = decode;
 
