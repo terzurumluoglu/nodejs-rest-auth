@@ -7,7 +7,7 @@ const { Mail } = require('../utils');
 const getUserById = async (id) => {
     const u = await getUserCollection().findOne({ _id: id })
     const user = new User();
-    user.setUser = u;
+    user.info = u;
     return user.info;
 }
 
@@ -17,10 +17,10 @@ const getUserByEmail = async (email) => {
         throw new Error(`There is no user this email: ${email}`);
     }
     const user = new User();
-    user.setUser = u;
+    user.info = u;
     return {
         user: user.info,
-        hashedPassword: user.password
+        hashedPassword: u.password
     };
 }
 const getUserByResetPasswordKey = async (resetPasswordKey) => {
@@ -29,7 +29,7 @@ const getUserByResetPasswordKey = async (resetPasswordKey) => {
         throw new Error('Reset Password Key is invalid!');
     }
     const user = new User();
-    user.setUser = u;
+    user.info = u;
     return user.info;
 }
 

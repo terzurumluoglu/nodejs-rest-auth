@@ -27,8 +27,7 @@ server.use(express.json());
 server.use(cookieParser());
 
 server.listen(PORT, () => {
-    const message = process.env.MESSAGE.split('{{PORT}}').join(PORT);
-    console.log(message);
+    console.log(process.env.MESSAGE.split('{{PORT}}').join(PORT));
 });
 
 module.exports = { server };

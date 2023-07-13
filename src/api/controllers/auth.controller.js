@@ -12,13 +12,13 @@ const register = asyncHandler(async (req, res, next) => {
     const { name, email, password } = req.body;
 
     const user = new User();
-    user.setName = name;
-    user.setEmail = email;
-    user.setPassword = password;
+    user.name = name;
+    user.email = email;
+    user.password = password;
 
-    const savedUser = await userService.save(user);
+    const savedUser = await userService.save(user.allInfo);
 
-    authService.sendTokenResponse(savedUser, 200, res);
+    authService.sendTokenResponse({ user: savedUser, res });
 });
 
 // @desc   Login
@@ -35,13 +35,13 @@ const login = asyncHandler(async (req, res, next) => {
     const { user, hashedPassword } = await userService.getUserByEmail(email);
 
     if (!user) {
-        return next(new ErrorResponse('Email or Password is invalid!', 401));
+        return next(new ErrorResponse('Email or Password is invalid!', 404));
     }
 
     const isMatch = await authService.matchPassword({ enteredPassword: password, hashedPassword });
 
     if (!isMatch) {
-        return next(new ErrorResponse('Email or Password is invalid!', 401));
+        return next(new ErrorResponse('Email or Password is invalid!', 404));
     }
 
     const response = {
@@ -78,7 +78,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
         success: true,
         result: {
             message: 'Email was sent successfully'
-        }
+        },
     })
 });
 
@@ -116,9 +116,9 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     res.status(200).send({
         success: true,
         result: {
-            message: 'Password changed successfully'
-        }
-    })
+            message: 'Password changed successfully',
+        },
+    });
 });
 
 const token = asyncHandler(async (req, res, next) => {
@@ -131,7 +131,7 @@ const token = asyncHandler(async (req, res, next) => {
 
     jwt.verify(refreshToken, process.env.REFRESH_SECRET, (error, decode) => {
         if (error){
-            return res.sendStatus(401)
+            return res.status(401).send('UNAUTHORIZE');
         }
         const { iat, exp, ...user } = decode;
 
