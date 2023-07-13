@@ -16,9 +16,9 @@ const register = asyncHandler(async (req, res, next) => {
     user.email = email;
     user.password = password;
 
-    const savedUser = await userService.save(user);
+    const savedUser = await userService.save(user.allInfo);
 
-    authService.sendTokenResponse(savedUser, 200, res);
+    authService.sendTokenResponse({ user: savedUser, res });
 });
 
 // @desc   Login
