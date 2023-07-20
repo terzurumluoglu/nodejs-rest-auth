@@ -121,6 +121,9 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     });
 });
 
+// @desc   Generate Access Token using by Refresh Token
+// @route  POST /auth/token
+// @access Public
 const token = asyncHandler(async (req, res, next) => {
 
     const { refreshToken } = req.body;
