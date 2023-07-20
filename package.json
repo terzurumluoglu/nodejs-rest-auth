@@ -1,5 +1,5 @@
 {
-  "name": "nodejs-rest",
+  "name": "nodejs-rest-auth",
   "version": "1.0.0",
   "description": "node js rest service development daily",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/terzurumluoglu/nodejs-rest.git"
+    "url": "git+https://github.com/terzurumluoglu/nodejs-rest-auth.git"
   },
   "keywords": [
     "nodejs",
@@ -21,9 +21,9 @@
   "author": "Toprak ERZURUMLUOĞLU <toprakerzurumluoglu@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/terzurumluoglu/nodejs-rest/issues"
+    "url": "https://github.com/terzurumluoglu/nodejs-rest-auth/issues"
   },
-  "homepage": "https://github.com/terzurumluoglu/nodejs-rest#readme",
+  "homepage": "https://github.com/terzurumluoglu/nodejs-rest-auth#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
