@@ -34,7 +34,7 @@ const sendTokenResponse = (response) => {
     const accessToken = generateJWT(user);
 
     const now = Date.now();
-    const expires = new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond);
+    const expires = new Date(now + process.env.REFRESH_COOKIE_EXPIRE * dayAsSecond);
 
     const options = {
         expires,
@@ -54,7 +54,7 @@ const sendTokenResponse = (response) => {
         refreshToken: generateRefreshToken(user)
     };
 
-    res.status(200).cookie('accessToken', accessToken, options).send({
+    res.status(200).cookie('refreshToken', result.refreshToken, options).send({
         success: true,
         result
     });
