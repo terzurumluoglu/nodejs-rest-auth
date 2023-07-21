@@ -34,12 +34,6 @@ const sendTokenResponse = (response) => {
     const accessToken = generateJWT(user);
 
     const now = Date.now();
-    const expires = new Date(now + process.env.REFRESH_COOKIE_EXPIRE * dayAsSecond);
-
-    const options = {
-        expires,
-        httpOnly: true,
-    };
 
     if (process.env.ENVIRONMENT === environments.production) {
         options.secure = true;
@@ -54,10 +48,19 @@ const sendTokenResponse = (response) => {
         refreshToken: generateRefreshToken(user)
     };
 
-    res.status(200).cookie('refreshToken', result.refreshToken, options).send({
-        success: true,
-        result
-    });
+    res.status(200)
+        .cookie('accessToken', accessToken, {
+            expires: new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond),
+            httpOnly: true,
+        })
+        .cookie('refreshToken', result.refreshToken, {
+            expires: new Date(now + process.env.REFRESH_COOKIE_EXPIRE * dayAsSecond),
+            httpOnly: true,
+        })
+        .send({
+            success: true,
+            result
+        });
 }
 
 module.exports = { hashString, matchPassword, generateJWT, sendTokenResponse, verifyJWT };
