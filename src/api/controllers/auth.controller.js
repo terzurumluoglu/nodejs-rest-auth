@@ -18,7 +18,13 @@ const register = asyncHandler(async (req, res, next) => {
 
     const savedUser = await userService.save(user.allInfo);
 
-    authService.sendTokenResponse({ user: savedUser, res });
+    const response = {
+        user: savedUser,
+        res,
+        refreshToken: undefined
+    };
+
+    authService.sendTokenResponse(response);
 });
 
 // @desc   Login
@@ -126,7 +132,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 // @access Public
 const token = asyncHandler(async (req, res, next) => {
 
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.cookies;
     
     if (!refreshToken) {
         return res.status(401).send('UNAUTHORIZE');

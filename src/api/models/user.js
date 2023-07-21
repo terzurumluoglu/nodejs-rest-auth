@@ -4,6 +4,7 @@ class User {
     #email;
     #password;
     #createdAt;
+    #roles;
 
     #isActive;
     #isDeleted;
@@ -21,6 +22,7 @@ class User {
         this.#email = val.email;
         this.#password = val.password;
         this.#createdAt = val.createdAt;
+        this.#roles = val.roles;
         this.#isActive = val.isActive;
         this.#isDeleted = val.isDeleted;
         this.#resetPasswordKey = val.resetPasswordKey;
@@ -33,6 +35,7 @@ class User {
             name: this.#name,
             email: this.#email,
             createdAt: this.#createdAt,
+            roles: this.#roles,
             isActive: this.#isActive,
             isDeleted: this.#isDeleted,
         }
@@ -45,6 +48,7 @@ class User {
             email: this.#email,
             password: this.#password,
             createdAt: this.#createdAt,
+            roles: this.#roles,
             isActive: this.#isActive,
             isDeleted: this.#isDeleted,
         }
