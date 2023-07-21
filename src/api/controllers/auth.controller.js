@@ -18,7 +18,13 @@ const register = asyncHandler(async (req, res, next) => {
 
     const savedUser = await userService.save(user.allInfo);
 
-    authService.sendTokenResponse({ user: savedUser, res });
+    const response = {
+        user: savedUser,
+        res,
+        refreshToken: undefined
+    };
+
+    authService.sendTokenResponse(response);
 });
 
 // @desc   Login
