@@ -39,28 +39,29 @@ const sendTokenResponse = (response) => {
         options.secure = true;
     }
 
-    const result = refreshToken ? {
+    const result = {
         accessToken,
-        refreshToken
-    } : {
-        ...user,
-        accessToken,
-        refreshToken: generateRefreshToken(user)
+        refreshToken,
     };
 
-    res.status(200)
-        .cookie('accessToken', accessToken, {
-            expires: new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond),
-            httpOnly: true,
-        })
-        .cookie('refreshToken', result.refreshToken, {
+    res.cookie('accessToken', accessToken, {
+        expires: new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond),
+        httpOnly: true,
+    });
+
+    if (!refreshToken) {
+        result.refreshToken = generateRefreshToken(user);
+        result.user = user;
+        res.cookie('refreshToken', result.refreshToken, {
             expires: new Date(now + process.env.REFRESH_COOKIE_EXPIRE * dayAsSecond),
             httpOnly: true,
-        })
-        .send({
-            success: true,
-            result
         });
+    }
+
+    res.status(200).send({
+        success: true,
+        result
+    });
 }
 
 module.exports = { hashString, matchPassword, generateJWT, sendTokenResponse, verifyJWT };
