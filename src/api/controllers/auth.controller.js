@@ -132,7 +132,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 // @access Public
 const token = asyncHandler(async (req, res, next) => {
 
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.cookies;
     
     if (!refreshToken) {
         return res.status(401).send('UNAUTHORIZE');
