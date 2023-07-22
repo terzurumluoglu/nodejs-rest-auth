@@ -154,4 +154,17 @@ const token = asyncHandler(async (req, res, next) => {
     });
 });
 
-module.exports = { register, login, forgotPassword, resetPassword, token };
+
+const logout = asyncHandler(async (req, res, next) => {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
+    res.status(200).json({
+        success: true,
+        result: {
+            message: 'Success',
+        }
+    });
+});
+
+module.exports = { register, login, logout, forgotPassword, resetPassword, token };
