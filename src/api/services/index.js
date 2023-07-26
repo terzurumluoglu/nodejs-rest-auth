@@ -1,4 +1,6 @@
 const userService = require('./user.service');
 const authService = require('./auth.service');
 
-module.exports = { authService, userService };
+const cookieService = require('./cookie.service');
+
+module.exports = { authService, userService, cookieService };
