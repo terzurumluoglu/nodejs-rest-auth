@@ -1,5 +1,6 @@
 const { asyncHandler } = require('../middleware/asyncHandler');
 const { authService, userService } = require('../services');
+const { deleteCookie } = require('../services/cookie.service');
 const { ErrorResponse }  = require('../utils');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
@@ -156,8 +157,7 @@ const token = asyncHandler(async (req, res, next) => {
 
 
 const logout = asyncHandler(async (req, res, next) => {
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    deleteCookie(res, 'accessToken', 'refreshToken');
 
     res.status(200).json({
         success: true,
