@@ -1,5 +1,5 @@
-const { asyncHandler } = require('../middleware/asyncHandler');
 const { authService, userService } = require('../services');
+const { deleteCookie } = require('../services/cookie.service');
 const { ErrorResponse }  = require('../utils');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // @desc   Register
 // @route  POST /auth/register
 // @access Public
-const register = asyncHandler(async (req, res, next) => {
+const register = async (req, res, next) => {
 
     const { name, email, password } = req.body;
 
@@ -25,12 +25,12 @@ const register = asyncHandler(async (req, res, next) => {
     };
 
     authService.sendTokenResponse(response);
-});
+};
 
 // @desc   Login
 // @route  POST /auth/login
 // @access Public
-const login = asyncHandler(async (req, res, next) => {
+const login = async (req, res, next) => {
 
     const { email, password } = req.body;
 
@@ -57,12 +57,12 @@ const login = asyncHandler(async (req, res, next) => {
     };
 
     authService.sendTokenResponse(response);
-});
+};
 
 // @desc   Forgot Password
 // @route  POST /auth/forgotpassword
 // @access Public
-const forgotPassword = asyncHandler(async (req, res, next) => {
+const forgotPassword = async (req, res, next) => {
 
     const { email } = req.body;
 
@@ -86,12 +86,12 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
             message: 'Email was sent successfully'
         },
     })
-});
+};
 
 // @desc   Reset Password
 // @route  POST /auth/resetpassword
 // @access Public
-const resetPassword = asyncHandler(async (req, res, next) => {
+const resetPassword = async (req, res, next) => {
 
     const { resetPasswordKey } = req.params;
     const { password } = req.body;
@@ -125,12 +125,12 @@ const resetPassword = asyncHandler(async (req, res, next) => {
             message: 'Password changed successfully',
         },
     });
-});
+};
 
 // @desc   Generate Access Token using by Refresh Token
 // @route  POST /auth/token
 // @access Public
-const token = asyncHandler(async (req, res, next) => {
+const token = async (req, res, next) => {
 
     const { refreshToken } = req.cookies;
     
@@ -152,6 +152,17 @@ const token = asyncHandler(async (req, res, next) => {
 
         authService.sendTokenResponse(response);
     });
-});
+};
 
-module.exports = { register, login, forgotPassword, resetPassword, token };
+const logout = async (req, res, next) => {
+    deleteCookie(res, 'accessToken', 'refreshToken');
+
+    res.status(200).json({
+        success: true,
+        result: {
+            message: 'Success',
+        }
+    });
+};
+
+module.exports = { register, login, logout, forgotPassword, resetPassword, token };

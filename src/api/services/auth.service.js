@@ -1,6 +1,7 @@
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { environments } = require('../../constants');
+const { saveCookie } = require('../services/cookie.service');
 
 const dayAsSecond = 24 * 60 * 60 * 1000;
 
@@ -44,7 +45,7 @@ const sendTokenResponse = (response) => {
         refreshToken,
     };
 
-    res.cookie('accessToken', accessToken, {
+    saveCookie(res, 'accessToken', accessToken, {
         expires: new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond),
         httpOnly: true,
     });
@@ -52,7 +53,7 @@ const sendTokenResponse = (response) => {
     if (!refreshToken) {
         result.refreshToken = generateRefreshToken(user);
         result.user = user;
-        res.cookie('refreshToken', result.refreshToken, {
+        saveCookie(res, 'refreshToken', result.refreshToken, {
             expires: new Date(now + process.env.REFRESH_COOKIE_EXPIRE * dayAsSecond),
             httpOnly: true,
         });
