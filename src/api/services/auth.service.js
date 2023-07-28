@@ -36,6 +36,11 @@ const sendTokenResponse = (response) => {
 
     const now = Date.now();
 
+    const options = {
+        expires: new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond),
+        httpOnly: true,
+    };
+
     if (process.env.ENVIRONMENT === environments.production) {
         options.secure = true;
     }
@@ -45,10 +50,7 @@ const sendTokenResponse = (response) => {
         refreshToken,
     };
 
-    saveCookie(res, 'accessToken', accessToken, {
-        expires: new Date(now + process.env.JWT_COOKIE_EXPIRE * dayAsSecond),
-        httpOnly: true,
-    });
+    saveCookie(res, 'accessToken', accessToken, options);
 
     if (!refreshToken) {
         result.refreshToken = generateRefreshToken(user);
